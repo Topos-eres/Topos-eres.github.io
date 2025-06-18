@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=5">
+  <title>Personal Website</title>
+  <link rel="stylesheet" href="./mi.css">
+</head>
+<body lang="en">
+
+
+
+  <!-- Header with home-icon nav -->
+  <header>
+    <nav>
+      <a href="index.html" aria-label="Link to home">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1.5rem" height="1.5rem" viewBox="0 0 24 24">
+          <path fill="#212121" d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h6l2 2h8q.825 0 1.413.588T22 8v10q0 .825-.587 1.413T20 20z"/>
+        </svg>
+      </a>
+    </nav>
+    <h1 style="margin:0; font-size: clamp(1.2rem, 5vw, 1.8rem);">Main</h1>
+  </header>
+
+  <!-- Intro section -->
+  <section>
+    
+  <div class="container">
+    <img src="furina.jpg" alt="Icon" style="width: 20vw; max-width: 80px; height: auto;" class="image"> 
+  </div>
+      <script>
+        const img = document.querySelector('.image');
+        let direction = 1;
+        let position = 0;
+        const containerWidth = document.querySelector('.container').offsetWidth;
+        const imgWidth = img.offsetWidth;
+
+        function slideImage() {
+            position += 1.5 * direction; // Move the image
+
+            if (position >= containerWidth - imgWidth || position <= 0) {
+                direction *= -1; // Reverse direction
+                img.style.transform = `rotateY(${direction === 1 ? 0 : 180}deg)`;
+            }
+
+            img.style.left = position + 'px';
+            requestAnimationFrame(slideImage);
+        }
+
+        slideImage();
+    </script>
+    <h2>Hi, Welcome to Topos-eres personal website!</h2>
+    <p>
+      Topos-eres is an aspiring mathematician, with interest on chess and music composition. This website will include my notes, projects, and works.
+    </p>
+  </section>
+
+  <!-- Main link list -->
+  <main>
+    <a class="inode" href="pages/Math.html" aria-label="Link to Math">   
+      <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ∯ Math
+    </a>
+    <a class="inode" href="pages/Chess.html" aria-label="Link to Chess"> 
+      <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ♘ Chess
+    </a>
+    <a class="inode" href="pages/Music Piece.html" aria-label="Link to Music">
+      <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> 𝄞 Music pieces
+    </a>
+    <a class="inode" href="pages/Projects.html" aria-label="Link to Projects"> 
+      <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ⍌ Projects
+    </a>
+    <a class="inode" href="pages/Tools.html" aria-label="Link to Tools">    
+      <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ☭ Tools
+    </a>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <span>"Footer Description"</span>
+    <div>
+      <a href="" aria-label="Link to Ko-Fi">❤ Support me</a> /
+      <a href="" aria-label="Link to GitHub">GitHub</a> /
+      <a href="" aria-label="Link to Reddit">Reddit</a> /
+      <a href="" aria-label="Link to mail">Mail</a> /
+      <a href="" aria-label="Link to X">X</a>
+    </div>
+  </footer>
+
+</body>
+</html>
