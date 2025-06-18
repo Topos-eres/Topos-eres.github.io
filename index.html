@@ -30,24 +30,31 @@
   </div>
       <script>
         const img = document.querySelector('.image');
+        const container = document.querySelector('.container');
         let direction = 1;
         let position = 0;
-        const containerWidth = document.querySelector('.container').offsetWidth;
-        const imgWidth = img.offsetWidth;
 
-        function slideImage() {
-            position += 1.5 * direction; // Move the image
+        function startAnimation() {
+          const containerWidth = container.offsetWidth;
+          const imgWidth = img.offsetWidth;
 
+          function slideImage() {
+            position += 1.5 * direction;
             if (position >= containerWidth - imgWidth || position <= 0) {
-                direction *= -1; // Reverse direction
-                img.style.transform = `rotateY(${direction === 1 ? 0 : 180}deg)`;
+              direction *= -1;
+              img.style.transform = `rotateY(${direction === 1 ? 0 : 180}deg)`;
             }
-
             img.style.left = position + 'px';
             requestAnimationFrame(slideImage);
+          }
+          slideImage();
         }
 
-        slideImage();
+        if (img.complete) {
+          startAnimation();
+        } else {
+          img.onload = startAnimation;
+        }
     </script>
     <h2>Hi, Welcome to Topos-eres personal website!</h2>
     <p>
