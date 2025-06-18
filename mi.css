@@ -129,21 +129,18 @@ nav, footer > div {
   font-size: 14px;
   gap: 3px;
 }
-        .container {
-            position: relative;
-            width: 600px;
-            height: 90px;
-            overflow: hidden;
-            border: 0px solid black;
-        }
-
-        .image {
-            width: 100px;
-            position: absolute;
-            left: 0;
-            transition: transform 1s;
-        }
-		
+.container {
+  position: relative;
+  width: 600px; /* or 100% or another fixed value */
+  height: 90px;
+  overflow: hidden;
+}
+.image {
+  width: 100px;
+  position: absolute;
+  left: 0;
+  transition: transform 1s;
+}		
 .droplet {
       position: absolute;
       border-radius: 50%;
