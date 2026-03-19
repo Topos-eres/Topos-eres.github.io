@@ -15,6 +15,7 @@ html, body {
   min-height: 100%;
 }
 
+/* body is now full-page, not the narrow content wrapper */
 body {
   position: relative;
   padding: 1em;
@@ -23,28 +24,16 @@ body {
   overflow-x: hidden;
 }
 
-/* Glass content wrapper */
+/* centered content wrapper */
 .page-shell {
   position: relative;
   z-index: 1;
   margin: 0 auto;
   max-width: 37em;
   width: 100%;
-  padding: 1.5em;
-
-  background: rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 16px;
-
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
-/* Full-screen wave background */
+/* full-screen wave background */
 .waves {
   position: fixed;
   inset: 0;
@@ -65,7 +54,7 @@ body {
   fill: none;
 }
 
-/* Keep all visible content above waves */
+/* keep content above waves */
 header, section, main, footer {
   position: relative;
   z-index: 1;
@@ -159,7 +148,7 @@ button:disabled {
   opacity: 0.9;
 }
 
-/* Main section links */
+/* “Inode” link style */
 .inode {
   display: flex;
   gap: 10px;
@@ -170,12 +159,11 @@ button:disabled {
   width: fit-content;
   position: relative;
   z-index: 1;
-  border-radius: 8px;
 }
 
 .inode:hover {
   transform: translateX(5px);
-  background-color: rgba(33, 33, 33, 0.08);
+  background-color: rgba(33, 33, 33, 0.1);
 }
 
 /* Simple flex nav & footer */
@@ -185,7 +173,7 @@ nav, footer > div {
   gap: 3px;
 }
 
-/* Intro image area */
+/* image strip */
 .container {
   position: relative;
   width: min(600px, 100%);
@@ -200,7 +188,6 @@ nav, footer > div {
   transition: transform 1s;
 }
 
-/* Droplet animation */
 .droplet {
   position: absolute;
   border-radius: 50%;
@@ -231,7 +218,7 @@ section {
   text-align: center;
 }
 
-/* Mobile responsiveness */
+/* ===== Mobile Responsiveness ===== */
 @media (max-width: 768px) {
   body {
     padding: 0.8rem;
@@ -240,8 +227,6 @@ section {
 
   .page-shell {
     max-width: 100%;
-    padding: 1rem;
-    border-radius: 12px;
   }
 
   header h1 {
