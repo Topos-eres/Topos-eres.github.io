@@ -6,9 +6,116 @@
   <title>Personal Website</title>
   <link rel="stylesheet" href="./mi.css">
 </head>
+
+<script>
+class MinimalWaves {
+  constructor(svg) {
+    this.svg = svg;
+    this.lines = [];
+    this.paths = [];
+
+    this.mouse = { x: -9999, y: -9999, sx: -9999, sy: -9999 };
+    this.time = 0;
+
+    window.addEventListener("resize", () => this.init());
+    window.addEventListener("mousemove", e => this.move(e), { passive: true });
+    window.addEventListener("touchmove", e => {
+      if (e.touches[0]) this.move(e.touches[0]);
+    }, { passive: true });
+
+    this.init();
+    requestAnimationFrame(() => this.animate());
+  }
+
+  move(e) {
+    this.mouse.x = e.clientX;
+    this.mouse.y = e.clientY;
+    if (this.mouse.sx < -1000) {
+      this.mouse.sx = e.clientX;
+      this.mouse.sy = e.clientY;
+    }
+  }
+
+  init() {
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.svg.setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
+
+    this.paths.forEach(p => p.remove());
+    this.paths = [];
+    this.lines = [];
+
+    const gapX = 20;
+    const gapY = 40;
+
+    const cols = Math.ceil(this.width / gapX) + 3;
+    const rows = Math.ceil(this.height / gapY) + 2;
+
+    for (let i = 0; i < cols; i++) {
+      let pts = [];
+
+      for (let j = 0; j < rows; j++) {
+        pts.push({
+          x: i * gapX,
+          y: j * gapY
+        });
+      }
+
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      this.svg.appendChild(path);
+
+      this.lines.push(pts);
+      this.paths.push(path);
+    }
+  }
+
+  animate() {
+    this.time += 0.01;
+
+    this.mouse.sx += (this.mouse.x - this.mouse.sx) * 0.08;
+    this.mouse.sy += (this.mouse.y - this.mouse.sy) * 0.08;
+
+    this.lines.forEach((pts, i) => {
+      let d = "";
+
+      pts.forEach((p, j) => {
+        const dx = p.x - this.mouse.sx;
+        const dy = p.y - this.mouse.sy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        const influence = Math.max(0, 1 - dist / 220);
+        const push = influence * 20;
+
+        const wave = Math.sin(this.time * 2 + p.y * 0.02 + i * 0.3) * 3;
+
+        const x = p.x + wave + (dx / (dist || 1)) * push;
+        const y = p.y + (dy / (dist || 1)) * push * 0.3;
+
+        if (j === 0) {
+          d += `M ${x} ${y}`;
+        } else {
+          const prev = pts[j - 1];
+          const cx = (prev.x + x) / 2;
+          const cy = (prev.y + y) / 2;
+          d += ` Q ${prev.x} ${prev.y} ${cx} ${cy}`;
+        }
+      });
+
+      this.paths[i].setAttribute("d", d);
+    });
+
+    requestAnimationFrame(() => this.animate());
+  }
+}
+
+new MinimalWaves(document.getElementById("wave-svg"));
+</script>
+  
 <body lang="en">
 
-
+<div class="waves">
+  <svg id="wave-svg"></svg>
+</div>
 
   <!-- Header with home-icon nav -->
   <header>
