@@ -6,6 +6,7 @@
   <title>Personal Website</title>
   <link rel="stylesheet" href="./mi.css">
 </head>
+
 <body lang="en">
   <div class="waves" aria-hidden="true">
     <svg id="wave-svg"></svg>
@@ -38,11 +39,21 @@
 
     <!-- Main link list -->
     <main>
-      <a class="inode" href="Pages/Math.html" aria-label="Link to Math">∯ Math</a>
-      <a class="inode" href="Pages/Chess.html" aria-label="Link to Chess">♘ Chess</a>
-      <a class="inode" href="Pages/Music Piece.html" aria-label="Link to Music">𝄞 Music pieces</a>
-      <a class="inode" href="Pages/Projects.html" aria-label="Link to Projects">⍌ Projects</a>
-      <a class="inode" href="Pages/Tools.html" aria-label="Link to Tools">☭ Tools</a>
+      <a class="inode" href="Pages/Math.html" aria-label="Link to Math">
+        <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ∯ Math
+      </a>
+      <a class="inode" href="Pages/Chess.html" aria-label="Link to Chess">
+        <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ♘ Chess
+      </a>
+      <a class="inode" href="Pages/Music Piece.html" aria-label="Link to Music">
+        <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> 𝄞 Music pieces
+      </a>
+      <a class="inode" href="Pages/Projects.html" aria-label="Link to Projects">
+        <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ⍌ Projects
+      </a>
+      <a class="inode" href="Pages/Tools.html" aria-label="Link to Tools">
+        <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ☭ Tools
+      </a>
     </main>
 
     <!-- Footer -->
@@ -77,6 +88,7 @@
         img.style.left = position + 'px';
         requestAnimationFrame(slideImage);
       }
+
       slideImage();
     }
 
@@ -91,12 +103,7 @@
         this.svg = svg;
         this.lines = [];
         this.paths = [];
-        this.mouse = {
-          x: -9999,
-          y: -9999,
-          sx: -9999,
-          sy: -9999
-        };
+        this.mouse = { x: -9999, y: -9999, sx: -9999, sy: -9999 };
         this.time = 0;
 
         this.init = this.init.bind(this);
@@ -127,19 +134,19 @@
         this.height = window.innerHeight;
         this.svg.setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
 
-        this.paths.forEach((p) => p.remove());
+        this.paths.forEach(p => p.remove());
         this.paths = [];
         this.lines = [];
 
-        const gapX = 18;
-        const gapY = 34;
-        const cols = Math.ceil(this.width / gapX) + 4;
-        const rows = Math.ceil(this.height / gapY) + 3;
+        const gapX = 20;
+        const gapY = 40;
+        const cols = Math.ceil(this.width / gapX) + 3;
+        const rows = Math.ceil(this.height / gapY) + 2;
 
-        for (let i = -2; i < cols; i++) {
+        for (let i = 0; i < cols; i++) {
           const pts = [];
 
-          for (let j = -1; j < rows; j++) {
+          for (let j = 0; j < rows; j++) {
             pts.push({
               x: i * gapX,
               y: j * gapY
@@ -148,13 +155,15 @@
 
           const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
           this.svg.appendChild(path);
+
           this.lines.push(pts);
           this.paths.push(path);
         }
       }
 
       animate() {
-        this.time += 0.012;
+        this.time += 0.01;
+
         this.mouse.sx += (this.mouse.x - this.mouse.sx) * 0.08;
         this.mouse.sy += (this.mouse.y - this.mouse.sy) * 0.08;
 
@@ -168,12 +177,12 @@
             const dy = p.y - this.mouse.sy;
             const dist = Math.sqrt(dx * dx + dy * dy) || 1;
 
-            const influence = Math.max(0, 1 - dist / 240);
+            const influence = Math.max(0, 1 - dist / 220);
             const push = influence * 20;
-            const wave = Math.sin(this.time * 2 + p.y * 0.02 + i * 0.3) * 3.5;
+            const wave = Math.sin(this.time * 2 + p.y * 0.02 + i * 0.3) * 3;
 
             const x = p.x + wave + (dx / dist) * push;
-            const y = p.y + (dy / dist) * push * 0.32;
+            const y = p.y + (dy / dist) * push * 0.3;
 
             if (j === 0) {
               d += `M ${x} ${y}`;
@@ -194,7 +203,10 @@
       }
     }
 
-    new MinimalWaves(document.getElementById("wave-svg"));
+    const waveSvg = document.getElementById("wave-svg");
+    if (waveSvg) {
+      new MinimalWaves(waveSvg);
+    }
   </script>
 </body>
 </html>
