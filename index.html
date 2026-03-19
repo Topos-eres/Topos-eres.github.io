@@ -8,14 +8,12 @@
 </head>
 
 <body lang="en">
-  <!-- Waves background -->
   <div class="waves" aria-hidden="true">
     <svg id="wave-svg"></svg>
   </div>
 
-  <!-- Glass content wrapper -->
   <div class="page-shell">
-
+    <!-- Header with home-icon nav -->
     <header>
       <nav>
         <a href="index.html" aria-label="Link to home">
@@ -27,40 +25,50 @@
       <h1 style="margin:0; font-size: clamp(1.2rem, 5vw, 1.8rem);">Main</h1>
     </header>
 
+    <!-- Intro section -->
     <section>
       <div class="container">
-        <img src="furina.jpg" class="image">
+        <img src="furina.jpg" alt="Icon" style="width: 20vw; max-width: 80px; height: auto;" class="image">
       </div>
 
       <h2>Hi, Welcome to Topos-eres personal website!</h2>
       <p>
-        Topos-eres is an aspiring mathematician, with interest on chess and music composition.
-        This website will include my notes, projects, and works.
+        Topos-eres is an aspiring mathematician, with interest on chess and music composition. This website will include my notes, projects, and works.
       </p>
     </section>
 
+    <!-- Main link list -->
     <main>
-      <a class="inode" href="Pages/Math.html">∯ Math</a>
-      <a class="inode" href="Pages/Chess.html">♘ Chess</a>
-      <a class="inode" href="Pages/Music Piece.html">𝄞 Music pieces</a>
-      <a class="inode" href="Pages/Projects.html">⍌ Projects</a>
-      <a class="inode" href="Pages/Tools.html">☭ Tools</a>
+      <a class="inode" href="Pages/Math.html" aria-label="Link to Math">
+        <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ∯ Math
+      </a>
+      <a class="inode" href="Pages/Chess.html" aria-label="Link to Chess">
+        <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ♘ Chess
+      </a>
+      <a class="inode" href="Pages/Music Piece.html" aria-label="Link to Music">
+        <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> 𝄞 Music pieces
+      </a>
+      <a class="inode" href="Pages/Projects.html" aria-label="Link to Projects">
+        <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ⍌ Projects
+      </a>
+      <a class="inode" href="Pages/Tools.html" aria-label="Link to Tools">
+        <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ☭ Tools
+      </a>
     </main>
 
+    <!-- Footer -->
     <footer>
       <span>"Footer Description"</span>
       <div>
-        <a href="">❤ Support me</a> /
-        <a href="">GitHub</a> /
-        <a href="">Reddit</a> /
-        <a href="">Mail</a> /
-        <a href="">X</a>
+        <a href="" aria-label="Link to Ko-Fi">❤ Support me</a> /
+        <a href="" aria-label="Link to GitHub">GitHub</a> /
+        <a href="" aria-label="Link to Reddit">Reddit</a> /
+        <a href="" aria-label="Link to mail">Mail</a> /
+        <a href="" aria-label="Link to X">X</a>
       </div>
     </footer>
-
   </div>
 
-  <!-- Image animation -->
   <script>
     const img = document.querySelector('.image');
     const container = document.querySelector('.container');
@@ -80,15 +88,16 @@
         img.style.left = position + 'px';
         requestAnimationFrame(slideImage);
       }
+
       slideImage();
     }
 
-    if (img.complete) startAnimation();
-    else img.onload = startAnimation;
-  </script>
+    if (img.complete) {
+      startAnimation();
+    } else {
+      img.onload = startAnimation;
+    }
 
-  <!-- Waves animation -->
-  <script>
     class MinimalWaves {
       constructor(svg) {
         this.svg = svg;
@@ -97,11 +106,18 @@
         this.mouse = { x: -9999, y: -9999, sx: -9999, sy: -9999 };
         this.time = 0;
 
-        window.addEventListener("resize", () => this.init());
-        window.addEventListener("mousemove", e => this.move(e));
+        this.init = this.init.bind(this);
+        this.move = this.move.bind(this);
+        this.animate = this.animate.bind(this);
+
+        window.addEventListener("resize", this.init);
+        window.addEventListener("mousemove", this.move, { passive: true });
+        window.addEventListener("touchmove", (e) => {
+          if (e.touches[0]) this.move(e.touches[0]);
+        }, { passive: true });
 
         this.init();
-        requestAnimationFrame(() => this.animate());
+        requestAnimationFrame(this.animate);
       }
 
       move(e) {
@@ -122,16 +138,19 @@
         this.paths = [];
         this.lines = [];
 
-        const gapX = 18;
-        const gapY = 34;
+        const gapX = 20;
+        const gapY = 40;
+        const cols = Math.ceil(this.width / gapX) + 3;
+        const rows = Math.ceil(this.height / gapY) + 2;
 
-        const cols = Math.ceil(this.width / gapX) + 4;
-        const rows = Math.ceil(this.height / gapY) + 3;
-
-        for (let i = -2; i < cols; i++) {
+        for (let i = 0; i < cols; i++) {
           const pts = [];
-          for (let j = -1; j < rows; j++) {
-            pts.push({ x: i * gapX, y: j * gapY });
+
+          for (let j = 0; j < rows; j++) {
+            pts.push({
+              x: i * gapX,
+              y: j * gapY
+            });
           }
 
           const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -143,29 +162,31 @@
       }
 
       animate() {
-        this.time += 0.012;
+        this.time += 0.01;
 
         this.mouse.sx += (this.mouse.x - this.mouse.sx) * 0.08;
         this.mouse.sy += (this.mouse.y - this.mouse.sy) * 0.08;
 
         this.lines.forEach((pts, i) => {
           let d = "";
-          let prevX, prevY;
+          let prevX = null;
+          let prevY = null;
 
           pts.forEach((p, j) => {
             const dx = p.x - this.mouse.sx;
             const dy = p.y - this.mouse.sy;
             const dist = Math.sqrt(dx * dx + dy * dy) || 1;
 
-            const influence = Math.max(0, 1 - dist / 240);
+            const influence = Math.max(0, 1 - dist / 220);
             const push = influence * 20;
-            const wave = Math.sin(this.time * 2 + p.y * 0.02 + i * 0.3) * 3.5;
+            const wave = Math.sin(this.time * 2 + p.y * 0.02 + i * 0.3) * 3;
 
             const x = p.x + wave + (dx / dist) * push;
-            const y = p.y + (dy / dist) * push * 0.32;
+            const y = p.y + (dy / dist) * push * 0.3;
 
-            if (j === 0) d += `M ${x} ${y}`;
-            else {
+            if (j === 0) {
+              d += `M ${x} ${y}`;
+            } else {
               const cx = (prevX + x) / 2;
               const cy = (prevY + y) / 2;
               d += ` Q ${prevX} ${prevY} ${cx} ${cy}`;
@@ -178,12 +199,14 @@
           this.paths[i].setAttribute("d", d);
         });
 
-        requestAnimationFrame(() => this.animate());
+        requestAnimationFrame(this.animate);
       }
     }
 
-    new MinimalWaves(document.getElementById("wave-svg"));
+    const waveSvg = document.getElementById("wave-svg");
+    if (waveSvg) {
+      new MinimalWaves(waveSvg);
+    }
   </script>
-
 </body>
 </html>
