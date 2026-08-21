@@ -12,7 +12,6 @@
   --muted: light-dark(#65616d, #aaa5b3);
   --line: light-dark(rgba(18, 17, 22, .16), rgba(255, 255, 255, .16));
   --purple: light-dark(#6930c3, #a970ff);
-  --purple-deep: light-dark(#2d0b59, #4b1686);
   --shadow: light-dark(rgba(22, 14, 35, .12), rgba(0, 0, 0, .38));
   --gear-x: 0px;
   --gear-y: 0px;
@@ -41,8 +40,9 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: -2;
-  border-left: 1px solid var(--line);
-  border-right: 1px solid var(--line);
+  left: 28%;
+  right: 28%;
+  border-inline: 1px solid var(--line);
   content: "";
 }
 
@@ -66,6 +66,16 @@ body:not(:has(.page-shell)) > * {
   pointer-events: none;
 }
 
+.celestial::before,
+.celestial::after {
+  position: absolute;
+  background: var(--line);
+  content: "";
+}
+
+.celestial::before { inset: 22% 0 auto; height: 1px; }
+.celestial::after { inset: auto 0 16%; height: 1px; }
+
 .star-field { position: absolute; inset: 0; }
 
 .star-field i {
@@ -80,19 +90,30 @@ body:not(:has(.page-shell)) > * {
   animation: star-pulse 5s var(--delay) ease-in-out infinite;
 }
 
-.star-field i:nth-child(7n) { color: var(--purple); background: currentColor; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 14%, transparent); }
+.star-field i:nth-child(7n) { box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 10%, transparent); }
 
 .gear {
   position: absolute;
   display: grid;
   place-items: center;
-  color: color-mix(in srgb, var(--purple) 40%, transparent);
+  color: color-mix(in srgb, var(--ink) 10%, transparent);
   font: 400 min(42vw, 34rem)/1 "Segoe UI Symbol", sans-serif;
   translate: var(--gear-x) var(--gear-y);
   animation: gear-turn 28s linear infinite;
 }
 
 .gear::before { content: "⚙"; }
+
+.gear::after {
+  position: absolute;
+  inset: 13%;
+  border: 2px solid transparent;
+  border-top-color: var(--purple);
+  border-right-color: var(--purple);
+  border-radius: 50%;
+  content: "";
+  rotate: -28deg;
+}
 
 .gear-one {
   top: -6rem;
@@ -118,7 +139,7 @@ header {
   align-items: center;
   margin-bottom: clamp(2rem, 7vw, 4.5rem);
   padding: 1rem 1.25rem;
-  border-left: .32rem solid var(--purple);
+  border-left: .32rem solid var(--ink);
   background: var(--surface);
   backdrop-filter: blur(12px);
   animation: enter .65s cubic-bezier(.16, 1, .3, 1) both;
@@ -139,7 +160,7 @@ header nav a {
 }
 
 header nav a:hover,
-header nav a:focus-visible { background: var(--purple); transform: rotate(-5deg) scale(1.05); }
+header nav a:focus-visible { background: var(--muted); transform: rotate(-5deg) scale(1.05); }
 
 header h1 {
   margin: 0;
@@ -154,7 +175,7 @@ header h1 {
 .eyebrow {
   align-self: end;
   margin: 0;
-  color: var(--purple);
+  color: var(--muted);
   font: 700 .7rem/1 ui-monospace, SFMono-Regular, Consolas, monospace;
   letter-spacing: .16em;
   text-transform: uppercase;
@@ -190,7 +211,7 @@ section p { max-width: 57ch; color: var(--muted); }
   position: absolute;
   inset: 50% 0 auto;
   height: 1px;
-  background: var(--purple);
+  background: var(--ink);
   content: "";
 }
 
@@ -239,7 +260,7 @@ main {
   position: absolute;
   inset: 0 auto 0 0;
   width: .35rem;
-  background: var(--purple);
+  background: var(--ink);
   content: "";
 }
 
@@ -255,7 +276,7 @@ main {
 .inode:hover,
 .inode:focus-visible {
   color: #fff;
-  background: var(--purple-deep);
+  background: var(--ink);
   transform: perspective(700px) translateX(.5rem) rotateX(calc(var(--tilt-y) * -4deg)) rotateY(calc(var(--tilt-x) * 5deg));
 }
 
@@ -277,7 +298,7 @@ footer > div { display: flex; flex-wrap: wrap; gap: .35rem; }
 
 a { color: inherit; }
 footer a { text-underline-offset: .25em; }
-footer a:hover { color: var(--purple); }
+footer a:hover { color: var(--ink); }
 
 body:not(:has(.page-shell)) {
   width: min(100%, 50rem);
@@ -288,12 +309,12 @@ body:not(:has(.page-shell)) > header { margin-top: clamp(1rem, 5vw, 4rem); }
 body:not(:has(.page-shell)) > p,
 body:not(:has(.page-shell)) > h2 { max-width: 62ch; margin-inline: auto; }
 body:not(:has(.page-shell)) > h2 { margin-top: 2.5rem; }
-body:not(:has(.page-shell)) > p a { color: var(--purple); text-underline-offset: .25em; }
+body:not(:has(.page-shell)) > p a { color: var(--ink); text-underline-offset: .25em; }
 
 pre, code { padding: .8em; overflow: auto; border-radius: 0; color: var(--paper); background: var(--ink); }
 img { max-width: 100%; height: auto; }
 svg { vertical-align: middle; }
-blockquote { margin-inline: 0; padding-left: 1rem; border-left: .25rem solid var(--purple); }
+blockquote { margin-inline: 0; padding-left: 1rem; border-left: .25rem solid var(--ink); }
 ul, ol { padding-left: 1.25rem; }
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: .6rem; border-bottom: 1px solid var(--line); text-align: left; }
