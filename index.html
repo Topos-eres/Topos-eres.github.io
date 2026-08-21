@@ -10,6 +10,7 @@
 
 <body lang="en">
   <div class="celestial" aria-hidden="true">
+    <svg class="gravity-grid" id="gravity-grid"></svg>
     <div class="star-field" id="star-field"></div>
     <svg class="celestial-map" viewBox="0 0 900 900">
       <g class="celestial-lines">
@@ -87,6 +88,88 @@
   </div>
 
   <script>
+    class GravityGrid {
+      constructor(svg, reducedMotion) {
+        this.svg = svg;
+        this.reducedMotion = reducedMotion;
+        this.vertical = [];
+        this.horizontal = [];
+        this.mouse = { x: innerWidth / 2, y: innerHeight / 2, sx: innerWidth / 2, sy: innerHeight / 2 };
+        this.time = 0;
+        this.init = this.init.bind(this);
+        this.move = this.move.bind(this);
+        this.draw = this.draw.bind(this);
+        addEventListener('resize', this.init);
+        if (!reducedMotion) addEventListener('pointermove', this.move, { passive: true });
+        this.init();
+        this.draw();
+      }
+
+      move(event) {
+        this.mouse.x = event.clientX;
+        this.mouse.y = event.clientY;
+      }
+
+      makeLine(points, orientation) {
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.classList.add(orientation);
+        this.svg.appendChild(path);
+        return { points, path, orientation };
+      }
+
+      init() {
+        this.width = innerWidth;
+        this.height = innerHeight;
+        this.svg.setAttribute('viewBox', `0 0 ${this.width} ${this.height}`);
+        this.svg.replaceChildren();
+        this.vertical = [];
+        this.horizontal = [];
+        const gap = 52;
+        const step = 40;
+
+        for (let x = 0; x <= this.width + gap; x += gap) {
+          const points = [];
+          for (let y = -step; y <= this.height + step; y += step) points.push({ x, y });
+          this.vertical.push(this.makeLine(points, 'vertical'));
+        }
+
+        for (let y = 0; y <= this.height + gap; y += gap) {
+          const points = [];
+          for (let x = -step; x <= this.width + step; x += step) points.push({ x, y });
+          this.horizontal.push(this.makeLine(points, 'horizontal'));
+        }
+      }
+
+      linePath(line) {
+        let path = '';
+        let previous;
+        line.points.forEach((point, index) => {
+          const dx = this.mouse.sx - point.x;
+          const dy = this.mouse.sy - point.y;
+          const distance = Math.hypot(dx, dy) || 1;
+          const gravity = Math.max(0, 1 - distance / 250) * 22;
+          const wave = Math.sin(this.time + (line.orientation === 'vertical' ? point.y : point.x) * .012) * 1.8;
+          const x = point.x + dx / distance * gravity + (line.orientation === 'vertical' ? wave : 0);
+          const y = point.y + dy / distance * gravity + (line.orientation === 'horizontal' ? wave : 0);
+          if (!index) path = `M ${x} ${y}`;
+          else path += ` Q ${previous.x} ${previous.y} ${(previous.x + x) / 2} ${(previous.y + y) / 2}`;
+          previous = { x, y };
+        });
+        line.path.setAttribute('d', path);
+      }
+
+      draw() {
+        this.time += .012;
+        this.mouse.sx += (this.mouse.x - this.mouse.sx) * .075;
+        this.mouse.sy += (this.mouse.y - this.mouse.sy) * .075;
+        [...this.vertical, ...this.horizontal].forEach(line => this.linePath(line));
+        if (!this.reducedMotion) requestAnimationFrame(this.draw);
+      }
+    }
+
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    new GravityGrid(document.getElementById('gravity-grid'), reducedMotion);
+
     const starField = document.getElementById('star-field');
     for (let i = 0; i < 24; i++) {
       const star = document.createElement('i');
