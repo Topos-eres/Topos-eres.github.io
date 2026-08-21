@@ -9,10 +9,10 @@
 </head>
 
 <body lang="en">
-  <div class="waves" aria-hidden="true">
-    <svg id="wave-svg"></svg>
-    <div class="orb orb-one"></div>
-    <div class="orb orb-two"></div>
+  <div class="celestial" aria-hidden="true">
+    <div class="star-field" id="star-field"></div>
+    <div class="gear gear-one"></div>
+    <div class="gear gear-two"></div>
   </div>
 
   <div class="page-shell">
@@ -74,115 +74,20 @@
   </div>
 
   <script>
-    class MinimalWaves {
-      constructor(svg) {
-        this.svg = svg;
-        this.lines = [];
-        this.paths = [];
-        this.mouse = { x: innerWidth / 2, y: innerHeight / 2, sx: innerWidth / 2, sy: innerHeight / 2 };
-        this.time = 0;
-
-        this.init = this.init.bind(this);
-        this.move = this.move.bind(this);
-        this.animate = this.animate.bind(this);
-
-        window.addEventListener("resize", this.init);
-        window.addEventListener("mousemove", this.move, { passive: true });
-        window.addEventListener("touchmove", (e) => {
-          if (e.touches[0]) this.move(e.touches[0]);
-        }, { passive: true });
-
-        this.init();
-        requestAnimationFrame(this.animate);
-      }
-
-      move(e) {
-        this.mouse.x = e.clientX;
-        this.mouse.y = e.clientY;
-        document.documentElement.style.setProperty('--pointer-x', `${e.clientX}px`);
-        document.documentElement.style.setProperty('--pointer-y', `${e.clientY}px`);
-        document.documentElement.style.setProperty('--orb-x', `${(e.clientX - innerWidth / 2) * -.025}px`);
-        document.documentElement.style.setProperty('--orb-y', `${(e.clientY - innerHeight / 2) * -.025}px`);
-      }
-
-      init() {
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
-        this.svg.setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
-
-        this.paths.forEach(p => p.remove());
-        this.paths = [];
-        this.lines = [];
-
-        const gapX = 54;
-        const gapY = 54;
-        const cols = Math.ceil(this.width / gapX) + 3;
-        const rows = Math.ceil(this.height / gapY) + 2;
-
-        for (let i = 0; i < cols; i++) {
-          const pts = [];
-
-          for (let j = 0; j < rows; j++) {
-            pts.push({
-              x: i * gapX,
-              y: j * gapY
-            });
-          }
-
-          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-          this.svg.appendChild(path);
-
-          this.lines.push(pts);
-          this.paths.push(path);
-        }
-      }
-
-      animate() {
-        this.time += 0.01;
-
-        this.mouse.sx += (this.mouse.x - this.mouse.sx) * 0.08;
-        this.mouse.sy += (this.mouse.y - this.mouse.sy) * 0.08;
-
-        this.lines.forEach((pts, i) => {
-          let d = "";
-          let prevX = null;
-          let prevY = null;
-
-          pts.forEach((p, j) => {
-            const dx = p.x - this.mouse.sx;
-            const dy = p.y - this.mouse.sy;
-            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-
-            const influence = Math.max(0, 1 - dist / 260);
-            const push = influence * 14;
-            const wave = Math.sin(this.time + p.y * 0.012 + i * 0.4) * 2;
-
-            const x = p.x + wave + (dx / dist) * push;
-            const y = p.y + (dy / dist) * push * 0.3;
-
-            if (j === 0) {
-              d += `M ${x} ${y}`;
-            } else {
-              const cx = (prevX + x) / 2;
-              const cy = (prevY + y) / 2;
-              d += ` Q ${prevX} ${prevY} ${cx} ${cy}`;
-            }
-
-            prevX = x;
-            prevY = y;
-          });
-
-          this.paths[i].setAttribute("d", d);
-        });
-
-        requestAnimationFrame(this.animate);
-      }
+    const starField = document.getElementById('star-field');
+    for (let i = 0; i < 48; i++) {
+      const star = document.createElement('i');
+      star.style.setProperty('--x', `${(i * 37) % 101}%`);
+      star.style.setProperty('--y', `${(i * 61) % 97}%`);
+      star.style.setProperty('--size', `${i % 7 === 0 ? 3 : 1}px`);
+      star.style.setProperty('--delay', `${-(i % 9)}s`);
+      starField.appendChild(star);
     }
 
-    const waveSvg = document.getElementById("wave-svg");
-    if (waveSvg && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      new MinimalWaves(waveSvg);
-    }
+    addEventListener('pointermove', event => {
+      document.documentElement.style.setProperty('--gear-x', `${(event.clientX - innerWidth / 2) * -.02}px`);
+      document.documentElement.style.setProperty('--gear-y', `${(event.clientY - innerHeight / 2) * -.02}px`);
+    }, { passive: true });
 
     document.querySelectorAll('.inode').forEach(link => {
       link.addEventListener('pointermove', event => {
