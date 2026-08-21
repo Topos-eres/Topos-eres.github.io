@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=5">
+  <meta name="color-scheme" content="light dark">
   <title>Personal Website</title>
   <link rel="stylesheet" href="./mi.css">
 </head>
@@ -10,6 +11,8 @@
 <body lang="en">
   <div class="waves" aria-hidden="true">
     <svg id="wave-svg"></svg>
+    <div class="orb orb-one"></div>
+    <div class="orb orb-two"></div>
   </div>
 
   <div class="page-shell">
@@ -22,13 +25,14 @@
           </svg>
         </a>
       </nav>
-      <h1 style="margin:0; font-size: clamp(1.2rem, 5vw, 1.8rem);">Main</h1>
+      <p class="eyebrow">Archive // 001</p>
+      <h1>Main</h1>
     </header>
 
     <!-- Intro section -->
     <section>
       <div class="container">
-        <img src="furina.png" alt="Icon" style="width: 20vw; max-width: 80px; height: auto;" class="image">
+        <img src="furina.png" alt="Anime character walking across the page" class="image">
       </div>
 
       <h2>Hi, Welcome to Topos-eres personal website!</h2>
@@ -39,19 +43,19 @@
 
     <!-- Main link list -->
     <main>
-      <a class="inode" href="Pages/Math.html" aria-label="Link to Math">
+      <a class="inode" href="Pages/Math.html" aria-label="Link to Math" data-index="01">
         <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ∯ Math
       </a>
-      <a class="inode" href="Pages/Chess.html" aria-label="Link to Chess">
+      <a class="inode" href="Pages/Chess.html" aria-label="Link to Chess" data-index="02">
         <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ♘ Chess
       </a>
-      <a class="inode" href="Pages/Music Piece.html" aria-label="Link to Music">
+      <a class="inode" href="Pages/Music Piece.html" aria-label="Link to Music" data-index="03">
         <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> 𝄞 Music pieces
       </a>
-      <a class="inode" href="Pages/Projects.html" aria-label="Link to Projects">
+      <a class="inode" href="Pages/Projects.html" aria-label="Link to Projects" data-index="04">
         <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ⍌ Projects
       </a>
-      <a class="inode" href="Pages/Tools.html" aria-label="Link to Tools">
+      <a class="inode" href="Pages/Tools.html" aria-label="Link to Tools" data-index="05">
         <svg width="30" height="16" fill="currentColor" viewBox="0 0 16 16"></svg> ☭ Tools
       </a>
     </main>
@@ -70,40 +74,12 @@
   </div>
 
   <script>
-    const img = document.querySelector('.image');
-    const container = document.querySelector('.container');
-    let direction = 1;
-    let position = 0;
-
-    function startAnimation() {
-      const containerWidth = container.offsetWidth;
-      const imgWidth = img.offsetWidth;
-
-      function slideImage() {
-        position += 1.5 * direction;
-        if (position >= containerWidth - imgWidth || position <= 0) {
-          direction *= -1;
-          img.style.transform = `rotateY(${direction === 1 ? 0 : 180}deg)`;
-        }
-        img.style.left = position + 'px';
-        requestAnimationFrame(slideImage);
-      }
-
-      slideImage();
-    }
-
-    if (img.complete) {
-      startAnimation();
-    } else {
-      img.onload = startAnimation;
-    }
-
     class MinimalWaves {
       constructor(svg) {
         this.svg = svg;
         this.lines = [];
         this.paths = [];
-        this.mouse = { x: -9999, y: -9999, sx: -9999, sy: -9999 };
+        this.mouse = { x: innerWidth / 2, y: innerHeight / 2, sx: innerWidth / 2, sy: innerHeight / 2 };
         this.time = 0;
 
         this.init = this.init.bind(this);
@@ -123,10 +99,10 @@
       move(e) {
         this.mouse.x = e.clientX;
         this.mouse.y = e.clientY;
-        if (this.mouse.sx < -1000) {
-          this.mouse.sx = e.clientX;
-          this.mouse.sy = e.clientY;
-        }
+        document.documentElement.style.setProperty('--pointer-x', `${e.clientX}px`);
+        document.documentElement.style.setProperty('--pointer-y', `${e.clientY}px`);
+        document.documentElement.style.setProperty('--orb-x', `${(e.clientX - innerWidth / 2) * -.025}px`);
+        document.documentElement.style.setProperty('--orb-y', `${(e.clientY - innerHeight / 2) * -.025}px`);
       }
 
       init() {
@@ -138,8 +114,8 @@
         this.paths = [];
         this.lines = [];
 
-        const gapX = 20;
-        const gapY = 40;
+        const gapX = 54;
+        const gapY = 54;
         const cols = Math.ceil(this.width / gapX) + 3;
         const rows = Math.ceil(this.height / gapY) + 2;
 
@@ -177,9 +153,9 @@
             const dy = p.y - this.mouse.sy;
             const dist = Math.sqrt(dx * dx + dy * dy) || 1;
 
-            const influence = Math.max(0, 1 - dist / 220);
-            const push = influence * 20;
-            const wave = Math.sin(this.time * 2 + p.y * 0.02 + i * 0.3) * 3;
+            const influence = Math.max(0, 1 - dist / 260);
+            const push = influence * 14;
+            const wave = Math.sin(this.time + p.y * 0.012 + i * 0.4) * 2;
 
             const x = p.x + wave + (dx / dist) * push;
             const y = p.y + (dy / dist) * push * 0.3;
@@ -204,9 +180,21 @@
     }
 
     const waveSvg = document.getElementById("wave-svg");
-    if (waveSvg) {
+    if (waveSvg && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
       new MinimalWaves(waveSvg);
     }
+
+    document.querySelectorAll('.inode').forEach(link => {
+      link.addEventListener('pointermove', event => {
+        const rect = link.getBoundingClientRect();
+        link.style.setProperty('--tilt-x', `${(event.clientX - rect.left) / rect.width - .5}`);
+        link.style.setProperty('--tilt-y', `${(event.clientY - rect.top) / rect.height - .5}`);
+      });
+      link.addEventListener('pointerleave', () => {
+        link.style.removeProperty('--tilt-x');
+        link.style.removeProperty('--tilt-y');
+      });
+    });
   </script>
 </body>
 </html>
