@@ -13,8 +13,8 @@
   --line: light-dark(rgba(18, 17, 22, .16), rgba(255, 255, 255, .16));
   --purple: light-dark(#6930c3, #a970ff);
   --shadow: light-dark(rgba(22, 14, 35, .12), rgba(0, 0, 0, .38));
-  --gear-x: 0px;
-  --gear-y: 0px;
+  --map-x: 0px;
+  --map-y: 0px;
 }
 
 * { box-sizing: border-box; }
@@ -92,45 +92,21 @@ body:not(:has(.page-shell)) > * {
 
 .star-field i:nth-child(7n) { box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 10%, transparent); }
 
-.gear {
+.celestial-map {
   position: absolute;
-  display: grid;
-  place-items: center;
-  color: color-mix(in srgb, var(--ink) 10%, transparent);
-  font: 400 min(42vw, 34rem)/1 "Segoe UI Symbol", sans-serif;
-  translate: var(--gear-x) var(--gear-y);
-  animation: gear-turn 28s linear infinite;
+  top: -12rem;
+  right: -17rem;
+  width: min(78vw, 55rem);
+  overflow: visible;
+  color: color-mix(in srgb, var(--ink) 16%, transparent);
+  translate: var(--map-x) var(--map-y);
+  animation: map-enter 1.2s cubic-bezier(.16, 1, .3, 1) both, map-turn 80s 1.2s linear infinite;
 }
 
-.gear::before { content: "⚙"; }
-
-.gear::after {
-  position: absolute;
-  inset: 13%;
-  border: 2px solid transparent;
-  border-top-color: var(--purple);
-  border-right-color: var(--purple);
-  border-radius: 50%;
-  content: "";
-  rotate: -28deg;
-}
-
-.gear-one {
-  top: -6rem;
-  right: -4rem;
-  width: min(42vw, 34rem);
-  aspect-ratio: 1;
-}
-
-.gear-two {
-  bottom: -9rem;
-  left: -8rem;
-  width: min(28vw, 21rem);
-  aspect-ratio: 1;
-  animation-direction: reverse;
-  animation-duration: 36s;
-  font-size: min(28vw, 21rem);
-}
+.celestial-lines { fill: none; stroke: currentColor; stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+.celestial-lines circle:nth-child(2),
+.celestial-lines ellipse { stroke-dasharray: 4 9; }
+.celestial-accent { fill: none; stroke: var(--purple); stroke-width: 2.5; vector-effect: non-scaling-stroke; }
 
 header {
   display: grid;
@@ -142,7 +118,7 @@ header {
   border-left: .32rem solid var(--ink);
   background: var(--surface);
   backdrop-filter: blur(12px);
-  animation: enter .65s cubic-bezier(.16, 1, .3, 1) both;
+  animation: reveal-in .8s cubic-bezier(.16, 1, .3, 1) both;
   clip-path: polygon(0 0, 95% 0, 100% 28%, 97% 100%, 0 100%);
 }
 
@@ -254,7 +230,13 @@ main {
   transform-origin: center;
   transition: transform .18s ease, color .18s ease, background-color .18s ease;
   clip-path: polygon(0 0, calc(100% - 1.5rem) 0, 100% 50%, calc(100% - 1.5rem) 100%, .45rem 100%);
+  animation: item-enter .7s cubic-bezier(.16, 1, .3, 1) both;
 }
+
+.inode:nth-child(2) { animation-delay: .06s; }
+.inode:nth-child(3) { animation-delay: .12s; }
+.inode:nth-child(4) { animation-delay: .18s; }
+.inode:nth-child(5) { animation-delay: .24s; }
 
 .inode::before {
   position: absolute;
@@ -330,8 +312,16 @@ input, button, select, textarea {
 
 button { color: var(--paper); background: var(--ink); cursor: pointer; }
 
-@keyframes enter { from { opacity: 0; transform: translateY(-1rem) skewX(-2deg); } }
-@keyframes gear-turn { to { rotate: 1turn; } }
+@keyframes reveal-in {
+  from { opacity: 0; clip-path: inset(0 100% 0 0); translate: 0 -1rem; }
+}
+
+@keyframes item-enter {
+  from { opacity: 0; clip-path: polygon(0 0, 0 0, 0 50%, 0 100%, 0 100%); translate: 0 1.5rem; }
+}
+
+@keyframes map-enter { from { opacity: 0; scale: 1.08; } }
+@keyframes map-turn { to { rotate: 1turn; } }
 @keyframes star-pulse { 50% { opacity: .8; scale: 1.6; } }
 
 @keyframes character-run {
@@ -344,8 +334,7 @@ button { color: var(--paper); background: var(--ink); cursor: pointer; }
 @media (max-width: 42rem) {
   body { padding: .85rem; }
   header { margin-bottom: 2rem; padding: .8rem; }
-  .gear-one { width: 70vw; font-size: 70vw; }
-  .gear-two { width: 58vw; font-size: 58vw; }
+  .celestial-map { top: -5rem; right: -12rem; width: 40rem; }
   .inode { min-height: 3.65rem; }
   footer > div { gap: .6rem; }
 }

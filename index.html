@@ -11,8 +11,21 @@
 <body lang="en">
   <div class="celestial" aria-hidden="true">
     <div class="star-field" id="star-field"></div>
-    <div class="gear gear-one"></div>
-    <div class="gear gear-two"></div>
+    <svg class="celestial-map" viewBox="0 0 900 900">
+      <g class="celestial-lines">
+        <circle cx="630" cy="245" r="205"></circle>
+        <circle cx="630" cy="245" r="142"></circle>
+        <ellipse cx="630" cy="245" rx="285" ry="105" transform="rotate(-17 630 245)"></ellipse>
+        <ellipse cx="630" cy="245" rx="116" ry="278" transform="rotate(28 630 245)"></ellipse>
+        <path d="M425 245h410M630 40v410"></path>
+        <path d="M477 108 783 382M483 389 777 101"></path>
+        <circle cx="630" cy="245" r="10"></circle>
+        <path d="M90 782a236 236 0 0 1 472 0"></path>
+        <path d="M138 782a188 188 0 0 1 376 0"></path>
+        <path d="M326 548v234M90 782h472"></path>
+      </g>
+      <path class="celestial-accent" d="M485 103a205 205 0 0 1 282 3"></path>
+    </svg>
   </div>
 
   <div class="page-shell">
@@ -75,7 +88,7 @@
 
   <script>
     const starField = document.getElementById('star-field');
-    for (let i = 0; i < 48; i++) {
+    for (let i = 0; i < 24; i++) {
       const star = document.createElement('i');
       star.style.setProperty('--x', `${(i * 37) % 101}%`);
       star.style.setProperty('--y', `${(i * 61) % 97}%`);
@@ -85,8 +98,8 @@
     }
 
     addEventListener('pointermove', event => {
-      document.documentElement.style.setProperty('--gear-x', `${(event.clientX - innerWidth / 2) * -.02}px`);
-      document.documentElement.style.setProperty('--gear-y', `${(event.clientY - innerHeight / 2) * -.02}px`);
+      document.documentElement.style.setProperty('--map-x', `${(event.clientX - innerWidth / 2) * -.012}px`);
+      document.documentElement.style.setProperty('--map-y', `${(event.clientY - innerHeight / 2) * -.012}px`);
     }, { passive: true });
 
     document.querySelectorAll('.inode').forEach(link => {
