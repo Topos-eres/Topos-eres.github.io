@@ -46,7 +46,9 @@
     <!-- Intro section -->
     <section>
       <div class="container">
-        <img src="furina.png" alt="Anime character walking across the page" class="image">
+        <canvas class="hopf-canvas" id="hopf-canvas" width="800" height="280" aria-label="Rotating Hopf fibration rendered with repeating HOPF text">
+          A rotating Hopf fibration rendered with repeating HOPF text.
+        </canvas>
       </div>
 
       <h2>Hi, Welcome to Topos-eres personal website!</h2>
@@ -88,6 +90,94 @@
   </div>
 
   <script>
+    class HopfAscii {
+      constructor(canvas, reducedMotion) {
+        this.canvas = canvas;
+        this.context = canvas.getContext('2d');
+        this.reducedMotion = reducedMotion;
+        this.lastFrame = 0;
+        this.fibers = Array.from({ length: 14 }, (_, index) => {
+          const y = 1 - (index / 13) * 2;
+          const radius = Math.sqrt(1 - y * y);
+          const angle = index * Math.PI * (3 - Math.sqrt(5));
+          const x = Math.cos(angle) * radius;
+          const z = Math.sin(angle) * radius;
+          const denominator = Math.sqrt(2 * (1 + z));
+          return {
+            a: Math.sqrt((1 + z) / 2),
+            b: x / denominator,
+            c: y / denominator
+          };
+        });
+        new ResizeObserver(() => this.resize()).observe(canvas);
+        this.resize();
+        requestAnimationFrame(time => this.draw(time));
+      }
+
+      resize() {
+        const rect = this.canvas.getBoundingClientRect();
+        const scale = Math.min(devicePixelRatio, 1.5);
+        this.canvas.width = Math.max(1, Math.round(rect.width * scale));
+        this.canvas.height = Math.max(1, Math.round(rect.height * scale));
+        this.scale = scale;
+      }
+
+      draw(time) {
+        if (!this.reducedMotion && time - this.lastFrame < 33) {
+          requestAnimationFrame(next => this.draw(next));
+          return;
+        }
+        this.lastFrame = time;
+        const context = this.context;
+        const width = this.canvas.width / this.scale;
+        const height = this.canvas.height / this.scale;
+        const rotation = this.reducedMotion ? .7 : time * .00012;
+        const tilt = -.38;
+        const ink = getComputedStyle(document.body).color;
+        const purple = matchMedia('(prefers-color-scheme: dark)').matches ? '#a970ff' : '#6930c3';
+        context.setTransform(this.scale, 0, 0, this.scale, 0, 0);
+        context.clearRect(0, 0, width, height);
+        context.font = '700 8px ui-monospace, SFMono-Regular, Consolas, monospace';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+
+        this.fibers.forEach((fiber, fiberIndex) => {
+          for (let step = 0; step < 54; step++) {
+            const phase = step / 54 * Math.PI * 2;
+            const cos = Math.cos(phase);
+            const sin = Math.sin(phase);
+            const x1 = fiber.a * cos;
+            const x2 = fiber.a * sin;
+            const x3 = fiber.b * cos - fiber.c * sin;
+            const x4 = fiber.b * sin + fiber.c * cos;
+            const divisor = Math.max(.16, 1 - x4);
+            let x = x1 / divisor;
+            let y = x2 / divisor;
+            let z = x3 / divisor;
+            if (Math.abs(x) > 5 || Math.abs(y) > 5 || Math.abs(z) > 5) continue;
+
+            const rotatedX = x * Math.cos(rotation) - z * Math.sin(rotation);
+            const rotatedZ = x * Math.sin(rotation) + z * Math.cos(rotation);
+            const rotatedY = y * Math.cos(tilt) - rotatedZ * Math.sin(tilt);
+            const depth = y * Math.sin(tilt) + rotatedZ * Math.cos(tilt);
+            const perspective = 1 / (1 + depth * .08);
+            const size = Math.min(width, height) * .23;
+            const screenX = width / 2 + rotatedX * size * perspective;
+            const screenY = height / 2 + rotatedY * size * perspective;
+            if (screenX < 0 || screenX > width || screenY < 0 || screenY > height) continue;
+
+            const glyphIndex = fiberIndex * 54 + step;
+            context.globalAlpha = Math.max(.2, Math.min(.78, .48 - depth * .1));
+            context.fillStyle = glyphIndex % 29 === 0 ? purple : ink;
+            context.fillText('HOPF'[glyphIndex % 4], screenX, screenY);
+          }
+        });
+
+        context.globalAlpha = 1;
+        if (!this.reducedMotion) requestAnimationFrame(next => this.draw(next));
+      }
+    }
+
     class GravityGrid {
       constructor(svg, reducedMotion) {
         this.svg = svg;
@@ -169,6 +259,7 @@
 
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     new GravityGrid(document.getElementById('gravity-grid'), reducedMotion);
+    new HopfAscii(document.getElementById('hopf-canvas'), reducedMotion);
 
     const starField = document.getElementById('star-field');
     for (let i = 0; i < 24; i++) {

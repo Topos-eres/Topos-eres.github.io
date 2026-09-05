@@ -194,7 +194,7 @@ section p { max-width: 57ch; color: var(--muted); }
 .container {
   position: relative;
   width: min(100%, 38rem);
-  height: 7rem;
+  height: clamp(13rem, 34vw, 17rem);
   overflow: hidden;
   border-block: 1px solid var(--line);
 }
@@ -207,14 +207,10 @@ section p { max-width: 57ch; color: var(--muted); }
   content: "";
 }
 
-.image {
-  position: absolute;
-  bottom: .4rem;
-  left: 0;
-  width: 5rem;
-  height: auto;
-  filter: drop-shadow(0 .7rem .7rem var(--shadow));
-  animation: character-run 10s linear infinite;
+.hopf-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 main {
@@ -340,13 +336,6 @@ button { color: var(--paper); background: var(--ink); cursor: pointer; }
 @keyframes map-turn { to { rotate: 1turn; } }
 @keyframes star-pulse { 50% { opacity: .8; scale: 1.6; } }
 
-@keyframes character-run {
-  0% { left: -5rem; transform: rotateY(0); }
-  48% { left: calc(100% - 5rem); transform: rotateY(0); }
-  50%, 98% { left: calc(100% - 5rem); transform: rotateY(180deg); }
-  100% { left: -5rem; transform: rotateY(180deg); }
-}
-
 @media (max-width: 42rem) {
   body { padding: .85rem; }
   header { margin-bottom: 2rem; padding: .8rem; }
@@ -358,5 +347,4 @@ button { color: var(--paper); background: var(--ink); cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  .image { left: calc(50% - 2.5rem); }
 }
