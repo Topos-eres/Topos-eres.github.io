@@ -240,7 +240,7 @@ main {
   text-decoration: none;
   transform: perspective(700px) rotateX(calc(var(--tilt-y) * -4deg)) rotateY(calc(var(--tilt-x) * 5deg));
   transform-origin: center;
-  transition: transform .18s ease, color .18s ease, background-color .18s ease;
+  transition: transform .18s ease;
   clip-path: polygon(0 0, calc(100% - 1.5rem) 0, 100% 50%, calc(100% - 1.5rem) 100%, .45rem 100%);
   animation: item-enter .7s cubic-bezier(.16, 1, .3, 1) both;
 }
@@ -269,13 +269,8 @@ main {
 
 .inode:hover,
 .inode:focus-visible {
-  color: #fff;
-  background: var(--ink);
   transform: perspective(700px) translateX(.5rem) rotateX(calc(var(--tilt-y) * -4deg)) rotateY(calc(var(--tilt-x) * 5deg));
 }
-
-.inode:hover::after,
-.inode:focus-visible::after { color: rgba(255, 255, 255, .7); }
 
 .inode svg { flex: 0 0 auto; }
 
